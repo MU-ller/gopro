@@ -6,3 +6,12 @@ resources:
 - service.yaml
 
 namespace: my-go-web-app
+
+commonLabels:           
+  app: go-web-app
+  version: v1.0.0
+  environment: production
+
+commonAnnotations:      
+  description: "Go Web Application"
+  maintained-by: "devops-team"
