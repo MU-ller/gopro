@@ -4,7 +4,7 @@ metadata:
   name: go-web-app
   namespace: my-go-web-app
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: go-web-app
