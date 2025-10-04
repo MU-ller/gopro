@@ -15,65 +15,28 @@ spec:
     spec:
       containers:
       - name: go-web-app
-        image: golang:1.21
-        workingDir: /app
-        command: ["/bin/sh"]
-        args: ["-c", "cd /app && go mod tidy && go run main.go"]
+        image: mu02/my-go-web-app:latest
         ports:
         - containerPort: 8080
-        volumeMounts:
-        - name: app-volume
-          mountPath: /app
         env:
         - name: PORT
           value: "8080"
-      volumes:
-      - name: app-volume
-        configMap:
-          name: go-app-code
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: go-app-code
-  namespace: my-go-web-app
-data:
-  main.go: |
-    package main
-
-    import (
-        "log"
-        "net/http"
-    )
-
-    func homePage(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "static/home.html")
-    }
-
-    func coursePage(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "static/courses.html")
-    }
-
-    func aboutPage(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "static/about.html")
-    }
-
-    func contactPage(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "static/contact.html")
-    }
-
-    func main() {
-        http.HandleFunc("/home", homePage)
-        http.HandleFunc("/courses", coursePage)
-        http.HandleFunc("/about", aboutPage)
-        http.HandleFunc("/contact", contactPage)
-
-        err := http.ListenAndServe("0.0.0.0:8080", nil)
-        if err != nil {
-            log.Fatal(err)
-        }
-    }
-  go.mod: |
-    module go-web-app
-
-    go 1.21
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /home
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /home
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
