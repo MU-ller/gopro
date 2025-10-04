@@ -7,15 +7,10 @@ resources:
 
 namespace: my-go-web-app
 
-commonLabels:           
-  app: go-web-app
-  version: v1.0.0
-  environment: production
-
+# Only keep what's essential
 commonAnnotations:      
   description: "Go Web Application"
   maintained-by: "devops-team"
-
 
 images:
 - name: go-web-app
