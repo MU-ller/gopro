@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-web-app
+  namespace: my-go-web-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-web-app
+  template:
+    metadata:
+      labels:
+        app: go-web-app
+    spec:
+      containers:
+      - name: go-web-app
+        image: golang:1.21
+        workingDir: /app
+        command: ["/bin/sh"]
+        args: ["-c", "cd /app && go mod tidy && go run main.go"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: app-volume
+          mountPath: /app
+        env:
+        - name: PORT
+          value: "8080"
+      volumes:
+      - name: app-volume
+        configMap:
+          name: go-app-code
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: go-app-code
+  namespace: my-go-web-app
+data:
+  main.go: |
+    package main
+
+    import (
+        "log"
+        "net/http"
+    )
+
+    func homePage(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/home.html")
+    }
+
+    func coursePage(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/courses.html")
+    }
+
+    func aboutPage(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/about.html")
+    }
+
+    func contactPage(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/contact.html")
+    }
+
+    func main() {
+        http.HandleFunc("/home", homePage)
+        http.HandleFunc("/courses", coursePage)
+        http.HandleFunc("/about", aboutPage)
+        http.HandleFunc("/contact", contactPage)
+
+        err := http.ListenAndServe("0.0.0.0:8080", nil)
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+  go.mod: |
+    module go-web-app
+
+    go 1.21
