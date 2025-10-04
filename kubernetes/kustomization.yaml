@@ -17,13 +17,11 @@ commonAnnotations:
   maintained-by: "devops-team"
 
 
-# Image overrides
 images:
 - name: go-web-app
   newName: your-dockerhub-username/my-go-web-app
   newTag: latest
 
-# Replica configuration
 replicas:
 - name: go-web-app
   count: 2
