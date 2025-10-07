@@ -19,4 +19,4 @@ images:
 
 replicas:
 - name: go-web-app
-  count: 4
+  count: 2
