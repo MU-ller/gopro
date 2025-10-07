@@ -16,7 +16,3 @@ images:
 - name: go-web-app
   newName: mu02/my-go-web-app
   newTag: latest
-
-replicas:
-- name: go-web-app
-  count: 2
